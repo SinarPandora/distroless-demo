@@ -6,9 +6,9 @@ COPY gradle gradle
 COPY build.gradle settings.gradle ./
 COPY src src
 
-RUN gradle build bootJar
+RUN gradle build bootJar -x compileAotJava
 
-FROM gcr.io/distroless/java17:latest as runtime
+FROM gcr.io/distroless/java17:nonroot as runtime
 
 USER nonroot:nonroot
 
@@ -16,7 +16,7 @@ COPY --from=build --chown=nonroot:nonroot /workspace/build/libs/demo-0.0.1.jar /
 
 EXPOSE 8080
 
-ENV _JAVA_OPTIONS "-Dfile.encoding=UTF-8 \
+ENV _JAVA_OPTIONS "-Xms512m \
 -Dspring.output.ansi.enabled=ALWAYS \
 -Dspring.profiles.active=default"
 

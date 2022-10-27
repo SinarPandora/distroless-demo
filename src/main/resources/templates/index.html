@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hello world!</title>
+    <style>
+        html, body {
+            padding: 0;
+        }
+
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+    <script th:src="@{/js/lottie-player.js}" defer></script>
+    <script th:src="@{/js/alpine.js}" defer></script>
+</head>
+<body>
+<div class="container" x-data="$IndexScope()" x-init="load()">
+    <h1 x-text="prompt">Loading...</h1>
+    <lottie-player x-show="!isLoading"
+            th:src="@{/animate/data.json}"
+            background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay>
+    </lottie-player>
+</div>
+
+<script>
+    function $IndexScope() {
+        return {
+            isLoading: true,
+            prompt: 'Loading...',
+            load() {
+                this.isLoading = true;
+                fetch('http://localhost:8080/test')
+                    .then(resp => resp.json())
+                    .then(body => {
+                        this.prompt = body.message;
+                        this.isLoading = false;
+                    });
+            }
+        };
+    }
+</script>
+</body>
+</html>
